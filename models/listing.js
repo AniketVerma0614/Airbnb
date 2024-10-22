@@ -21,7 +21,7 @@ const listingSchema = new Schema({
     country: String,
 });
 
-const Listing = mongoose.model("Listing", listingSchema);
+const Listing = mongoose.model("Listing",listingSchema);
 
 // Now we will export the MODEL form ==> Listing.js to the ==> app.js
 module.exports = Listing;
