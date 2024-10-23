@@ -21,6 +21,7 @@ async function main() {
 //EJS template
 app.set("view engine","ejs");
 app.set("views",path.join(__dirname,"views"));
+app.use(express.urlencoded({extended: true}));
 
 
 // Root route
@@ -37,6 +38,14 @@ app.get("/listings",async(req,res)=>{
 
 });
 
+//SHOW ROUTE
+app.get("/listings/:id",async(req,res)=>{
+  let {id}=req.params;
+  const listing =await Listing.findById(id);
+
+  res.render("listings/show.ejs", {listing});
+
+});
 
 // Route to test listing creation
 // app.get("/testListing", async (req, res) => {
