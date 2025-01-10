@@ -6,7 +6,7 @@ const Listing = require("./models/listing.js"); // Ensure the path is correct
 const path = require("path");
 const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
 
-// Initiate the database connection
+//Initiate the database connection !!!
 main()
   .then(() => {
     console.log("Connected to DB!");
@@ -18,18 +18,18 @@ main()
 async function main() {
   await mongoose.connect(MONGO_URL);
 }
-//EJS template
+//EJS template !!!
 app.set("view engine","ejs");
 app.set("views",path.join(__dirname,"views"));
 app.use(express.urlencoded({extended: true}));
 
 
-// Root route
+//Root route !!!
 app.get("/", (req, res) => {
   res.send("Root is working!");
 });
 
-//Creating an listing route !
+//Creating an listing route !!!
 //Inside Index Route !!!
 app.get("/listings",async(req,res)=>{
     const allListings=await Listing.find({});
@@ -38,8 +38,14 @@ app.get("/listings",async(req,res)=>{
 
 });
 
+//New Route
+app.get("/listings/new",(req,res) =>{
+  res.render("listings/new.ejs")
+});
+
+
 //SHOW ROUTE
-app.get("/listings/:id",async(req,res)=>{
+app.get("/listings/:id",async(req,res) => {
   let {id}=req.params;
   const listing =await Listing.findById(id);
 
@@ -47,6 +53,15 @@ app.get("/listings/:id",async(req,res)=>{
 
 });
 
+//Create Route
+app.post("/listings",async(req,res) =>{
+  // let {title,description,image,price,country,location} = req.body;
+  // let listing = req.body.listing;
+  const newListing =new Listing(req.body.listing);
+  await newListing.save();
+  // console.log(listing); 
+  res.redirect("/listings");
+});
 // Route to test listing creation
 // app.get("/testListing", async (req, res) => {
 //   try {
