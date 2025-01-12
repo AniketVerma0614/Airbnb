@@ -1,86 +1,103 @@
-//app.js
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
-const Listing = require("./models/listing.js"); // Ensure the path is correct
+const Listing = require("./models/listing.js");
 const path = require("path");
+const methodOverride = require("method-override");
+
 const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
 
-//Initiate the database connection !!!
-main()
-  .then(() => {
-    console.log("Connected to DB!");
-  })
-  .catch((err) => {
-    console.log("Connection error:", err);
-  });
-
+// Initiate the database connection
 async function main() {
-  await mongoose.connect(MONGO_URL);
+  try {
+    await mongoose.connect(MONGO_URL);
+    console.log("Connected to DB!");
+  } catch (err) {
+    console.error("Connection error:", err);
+  }
 }
-//EJS template !!!
-app.set("view engine","ejs");
-app.set("views",path.join(__dirname,"views"));
-app.use(express.urlencoded({extended: true}));
 
+main();
 
-//Root route !!!
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
+app.use(express.urlencoded({ extended: true }));
+app.use(methodOverride("_method"));
+
+// Root route
 app.get("/", (req, res) => {
   res.send("Root is working!");
 });
 
-//Creating an listing route !!!
-//Inside Index Route !!!
-app.get("/listings",async(req,res)=>{
-    const allListings=await Listing.find({});
-      // console.log(res);
-      res.render("listings/index.ejs", { allListings });
-
+// Index Route
+app.get("/listings", async (req, res) => {
+  try {
+    const allListings = await Listing.find({});
+    res.render("listings/index.ejs", { allListings });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error fetching listings.");
+  }
 });
 
-//New Route
-app.get("/listings/new",(req,res) =>{
-  res.render("listings/new.ejs")
+// New Route
+app.get("/listings/new", (req, res) => {
+  res.render("listings/new.ejs");
 });
 
-
-//SHOW ROUTE
-app.get("/listings/:id",async(req,res) => {
-  let {id}=req.params;
-  const listing =await Listing.findById(id);
-
-  res.render("listings/show.ejs", {listing});
-
+// Show Route
+app.get("/listings/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const listing = await Listing.findById(id);
+    if (!listing) {
+      return res.status(404).send("Listing not found");
+    }
+    res.render("listings/show.ejs", { listing });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error fetching the listing.");
+  }
 });
 
-//Create Route
-app.post("/listings",async(req,res) =>{
-  // let {title,description,image,price,country,location} = req.body;
-  // let listing = req.body.listing;
-  const newListing =new Listing(req.body.listing);
-  await newListing.save();
-  // console.log(listing); 
-  res.redirect("/listings");
+// Create Route
+app.post("/listings", async (req, res) => {
+  try {
+    const newListing = new Listing(req.body.listing);
+    await newListing.save();
+    res.redirect("/listings");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error creating the listing.");
+  }
 });
-// Route to test listing creation
-// app.get("/testListing", async (req, res) => {
-//   try {
-//     let sampleListing = new Listing({
-//       title: "My New Villa",
-//       description: "By the beach",
-//       price: 1200,
-//       location: "Calangute, Goa",
-//       country: "India",
-//     });
 
-//     await sampleListing.save();
-//     console.log("Sample listing was saved successfully");
-//     res.send("Successful testing!");
-//   } catch(error){
-//     console.error("Error saving the listing:", error);
-//     res.send("Error creating listing");
-//   }
-// });
+// Edit Route
+app.get("/listings/:id/edit", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const listing = await Listing.findById(id);
+    if (!listing) {
+      return res.status(404).send("Listing not found");
+    }
+    res.render("listings/edit.ejs", { listing });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error fetching the listing for editing.");
+  }
+});
+
+// Update Route
+app.put("/listings/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    await Listing.findByIdAndUpdate(id, { ...req.body.listing });
+    res.redirect(`/listings/${id}`);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error updating the listing.");
+  }
+});
 
 // Start the server
 app.listen(8080, () => {
