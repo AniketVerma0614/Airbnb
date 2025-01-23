@@ -1,15 +1,38 @@
-<% layout("/layouts/boilerplate") %>
-<body>
-    <h3>All Listings</h3>
-    <form method="GET" action="/listings/new">
-        <button>Create New Listings</button>
-    </form>
-    <ul>
-        <% for(let listing of allListings){ %>
-            <li><a href="/listings/<%= listing._id %>"> <%= listing.title %></a></li>
-        <% } %>
-    </ul>
-    
-</body>
-</html>
+<% layout("/layouts/boilerplate") %>  
+<body>  
+    <h3>All Listings</h3>  
+    <!-- <form method="GET" action="/listings/new">  
+        <button>Create New Listings</button>  
+    </form> -->  
+    <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 g-4">  
+        <% for(let listing of allListings) { %>  
+            <a href="/listings/<%=listing._id%>" class="listing-link">  
+                <div class="col">  
+                    <div class="card" style="width: 20rem; border-radius: 15px;">  
+                        <img src="<%= listing.image %>"   
+                             class="card-img-top custom-img-border"   
+                             alt="listing_image"   
+                             style="height: 20rem; object-fit: cover;">  
+                        <div class="card-img-overlay"></div>  
+                        <div class="card-body">  
+                            <p class="card-text">  
+                                <b><%= listing.title %> <br></b>  
+                                &#8377;<%= listing.price.toLocaleString("en-IN") %>/ night  
+                            </p>  
+                        </div>  
+                    </div>  
+                </div>  
+            </a>  
+        <% } %>  
+    </div>  
 
+    <style>  
+        .custom-img-border {  
+            border-top-left-radius: 15px;  /* Top left corner rounded */  
+            border-top-right-radius: 15px; /* Top right corner rounded */  
+            border-bottom-left-radius: 15px; /* Bottom left corner rounded */  
+            border-bottom-right-radius: 15px; /* Bottom right corner rounded */  
+        }  
+    </style>  
+</body>  
+</html>

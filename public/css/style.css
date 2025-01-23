@@ -1,3 +1,135 @@
 body{
-    background-color: pink;
+    font-family: "Plus Jakarta Sans,sans-serfi"!important;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+.container{
+    flex:1;
+}
+ .navbar{
+    height: 5rem;
+    background-color: white;
+
+ }
+ .fa-compass {
+    color: #fe424d;
+    font-size: 2rem;
+ }
+ .nav-link{
+    color: #222222 !important;
+ }
+ /* Footer */
+/* Footer */
+/* Footer Links */
+.f-info-links a {
+    text-decoration: none;
+    color: #222222; /* Dark gray for the links */
+}
+
+.f-info-links a:hover {
+    text-decoration: underline; /* Add underline on hover for emphasis */
+}
+
+/* Footer Alignment */
+.f-info {
+    text-align: center;
+    height: 8rem;
+    display: flex;
+    background-color: #ebebeb;
+    flex-direction: column; /* Stack items vertically */
+    justify-content: center; /* Center items vertically */
+    align-items: center; /* Center items horizontally */
+}
+
+.f-info-links {
+    text-align: center; /* Center the links */
+    margin-top: 0.5rem; /* Add some spacing if needed */
+}
+
+.f-info-socials {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem; /* Add spacing between icons and text */
+}
+
+.f-info-socials i {
+    margin-right: 1rem;
+}
+
+/* Cards */
+.card{
+    border: none !important;
+    margin-bottom: 2rem;
+
+}
+
+.card-image-top{
+    border-radius: 1rem !important;
+    width: 100% !important;
+    object-fit: cover !important;
+}
+
+.card-body {
+    padding: 0 !important;
+}
+
+.card-text p{
+    font-weight: 400 !important;
+}
+.listing-link {
+    text-decoration: none;
+}
+/* Card Effect */
+.card-img-overlay{
+    opacity: 0;
+}
+
+.card-img-overlay:hover{
+    opacity: 0.2;
+    background-color: white;
+}
+.custom-add-btn {
+    background-color: #fe424d !important; /* Custom background color */
+    border-color: #fe424d !important;    /* Match border color */
+    color: white !important;            /* Ensure text is visible */
+}
+
+.custom-add-btn:hover {
+    background-color: #d93740 !important; /* Darken on hover */
+    border-color: #d93740 !important;    /* Match border on hover */
+}
+
+/* Show Page */
+.show-img {
+    height: 20vh; /* Double the original height */
+    width: 50%; /* Half the original width */
+    object-fit: cover;
+    float: left; /* Align image to the left */
+    margin-right: 20px; /* Add spacing between image and text */
+    border-radius: 15px;
+}
+
+.edit-btn, .delete-btn {
+    width: 80px;
+    height: 36px;
+    font-size: 14px;
+}
+
+.card {
+    box-shadow: none;
+    border: none;
+    background-color: transparent;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+h3 {
+    text-align: left;
+}
+
+.card-body {
+    text-align: left;
 }
