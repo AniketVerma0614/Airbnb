@@ -53,25 +53,44 @@ app.get("/listings/new", (req, res) => {
 });
 
 //Show Route
-app.get("/listings/:id", wrapAsync(async(req, res) => {
-  const { id } = req.params;
-  try {
+
+/*
+app.get("/listings/:id", wrapAsync(async (req, res, next) => {
+    const { id } = req.params;
+    
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        throw new ExpressError(400, `Invalid ID: "${id}" is not a valid MongoDB ObjectId`);
+    }
+
     const listing = await Listing.findById(id);
     if (!listing) {
-      return res.status(404).send("Listing not found");
+        throw new ExpressError(404, "Listing not found");
     }
+    
     res.render("listings/show.ejs", { listing });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Error fetching the listing.");
-  }
 }));
+*/
+app.get("/listings/:id", wrapAsync(async (req, res, next) => {
+    const { id } = req.params;
+    
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        throw new ExpressError(400, `Invalid ID: "${id}" is not a valid MongoDB ObjectId`);
+    }
+
+    const listing = await Listing.findById(id);
+    if (!listing) {
+        throw new ExpressError(404, "Listing not found");
+    }
+    
+    res.render("listings/show.ejs", { listing });
+}));
+
 
 // Create Route
 app.post(
     "/listings",
     wrapAsync(async (req, res,next) => {
-      if(!req.body.listings){
+      if(!req.body.listing){
         throw new ExpressError(400,"Send valid data for listings");
       }
         const newListing = new Listing(req.body.listing);
@@ -121,7 +140,8 @@ app.all("*",(req,res,next)=>{
 
 app.use((err,req,res,next)=>{
     let {statusCode=500,message="Something went wrong !!!"}=err;
-    res.status(statusCode).send(message);
+    res.status(statusCode).render("error.ejs",{message});
+    // res.status(statusCode).send(message);
 });
 
 // Start the server
