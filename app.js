@@ -8,6 +8,7 @@ const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
+const {listingSchema} = require("./schema.js");
 
 const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
 
@@ -35,6 +36,12 @@ app.use(express.static(path.join(__dirname,"/public")));
 app.get("/", (req, res) => {
   res.send("Root is working!");
 });
+
+const validateListing = (req,res,next) {
+  
+}
+
+
 
 // Index Route
 app.get("/listings", wrapAsync(async(req, res) => {
@@ -90,10 +97,25 @@ app.get("/listings/:id", wrapAsync(async (req, res, next) => {
 app.post(
     "/listings",
     wrapAsync(async (req, res,next) => {
+      let result =listingSchema.validate(req.body);
+      console.log(result);
+      if(result.error){
+        throw new ExpressError(400, result.error);
+      }
       if(!req.body.listing){
         throw new ExpressError(400,"Send valid data for listings");
       }
         const newListing = new Listing(req.body.listing);
+        // if(!newListings.title){
+        //   throw new ExpressError(400,"Title is missing!");
+        // }
+        // if(!newListings.description){
+        //   throw new ExpressError(400,"Description is missing!");
+        // }
+        // if(!newListings.location){
+        //   throw new ExpressError(400,"Location is missing!");
+        // }
+
         await newListing.save();
         res.redirect("/listings");
   })
