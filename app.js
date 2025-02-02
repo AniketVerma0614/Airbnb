@@ -6,6 +6,7 @@ const Listing = require("./models/listing.js");
 const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
+const wrapAsync = require("./utils/wrapAsync.js");
 
 const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
 
@@ -50,7 +51,7 @@ app.get("/listings/new", (req, res) => {
   res.render("listings/new.ejs");
 });
 
-// Show Route
+//Show Route
 app.get("/listings/:id", async (req, res) => {
   const { id } = req.params;
   try {
@@ -66,16 +67,14 @@ app.get("/listings/:id", async (req, res) => {
 });
 
 // Create Route
-app.post("/listings", async (req, res) => {
-  try {
-    const newListing = new Listing(req.body.listing);
-    await newListing.save();
-    res.redirect("/listings");
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Error creating the listing.");
-  }
-});
+app.post(
+    "/listings",
+    wrapAsync(async (req, res,next) => {
+        const newListing = new Listing(req.body.listing);
+        await newListing.save();
+        res.redirect("/listings");
+  })
+);
 
 // Edit Route
 app.get("/listings/:id/edit", async (req, res) => {
@@ -111,6 +110,12 @@ app.delete("/listings/:id", async (req, res) => {
   console.log(deletedListing);
   res.redirect("/listings");
 });
+
+app.use((err,req,res,next)=>{
+    res.send("something went wrong !!!");
+});
+
+
 
 
 // Start the server

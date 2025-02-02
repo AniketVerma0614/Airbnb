@@ -5,7 +5,7 @@
         <body>
             <div class="container mt-5">
                 <h3 class="text-center mb-4">Edit Your Listing</h3>
-                <form method="POST" action="/listings/<%= listing.id %>?_method=PUT" class="p-4 bg-light border rounded">
+                <form method="POST" action="/listings/<%= listing.id %>?_method=PUT" class="p-4 bg-light border rounded needs-validation" novalidate>
                     <div class="mb-3">
                         <label for="title" class="form-label">Title</label>
                         <input 
@@ -16,6 +16,7 @@
                             value="<%= listing.title %>" 
                             required
                         >
+                        <div class="valid-feedback">Title Looks good</div>
                     </div>
                     <div class="mb-3">
                         <label for="description" class="form-label">Description</label>
@@ -26,6 +27,7 @@
                             rows="4"
                             required
                         ><%= listing.description %></textarea>
+                        <div class="valid-feedback">Description should be short</div>
                     </div>
                     <div class="mb-3">
                         <label for="image" class="form-label">Image Link</label>
@@ -37,18 +39,19 @@
                             value="<%= listing.image %>" 
                             required
                         >
+                        <div class="valid-feedback">Image link shoud be valid</div>
                     </div>
                     <div class="row">
                         <div class="mb-3 col-md-4">
                             <label for="price" class="form-label">Price</label>
-                            <input 
-                                type="number" 
+                            <input  
                                 class="form-control" 
                                 id="price" 
                                 name="listing[price]" 
                                 value="<%= listing.price %>" 
                                 required
                             >
+                            <div class="valid-feedback">Price should be valid</div>
                         </div>
                         <div class="mb-3 col-md-8">
                             <label for="country" class="form-label">Country</label>
@@ -60,6 +63,7 @@
                                 value="<%= listing.country %>" 
                                 required
                             >
+                            <div class="valid-feedback">Country name should be valid</div>
                         </div>
                     </div>
                     <div class="mb-3">
@@ -72,6 +76,7 @@
                             value="<%= listing.location %>" 
                             required
                         >
+                        <div class="valid-feedback">Location shoould be valid</div>
                     </div>
                     <button type="submit" class="btn btn-dark w-10" style="background-color: #fe424d;">Edit</button>
                     <br><br>

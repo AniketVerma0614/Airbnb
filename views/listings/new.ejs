@@ -5,7 +5,7 @@
 <body>
     <div class="container mt-5">
         <h3 class="text-center mb-4">Create a New Listing</h3>
-        <form method="POST" action="/listings" class="p-4 bg-light border rounded">
+        <form method="POST" action="/listings" class="p-4 bg-light border rounded needs-validation" novalidate>
             <div class="mb-3">
                 <label for="title" class="form-label">Title</label>
                 <input 
@@ -16,6 +16,7 @@
                     placeholder="Add a catchy title" 
                     required
                 >
+                <div class="valid-feedback">Title Looks good</div>
             </div>
             <div class="mb-3">
                 <label for="description" class="form-label">Description</label>
@@ -27,6 +28,7 @@
                     rows="4"
                     required
                 ></textarea>
+                <div class="invalid-feedback">Please enter a short description</div>
             </div>
             <div class="mb-3">
                 <label for="image" class="form-label">Image Link</label>
@@ -41,14 +43,14 @@
         <div class="row">
             <div class="mb-3 col-md-4">
                 <label for="price" class="form-label">Price</label>
-                <input 
-                    type="number" 
+                <input
                     class="form-control" 
                     id="price" 
                     name="listing[price]" 
                     placeholder="1200" 
                     required
                 >
+                <div class="invalid-feedback">Please Enter a Valid Price</div>
             </div>
             <div class="mb-3 col-md-8">
                 <label for="country" class="form-label">Country</label>
@@ -60,6 +62,7 @@
                     placeholder="India" 
                     required
                 >
+                <div class="invalid-feedback">Country name should be valid</div>
             </div>
         </div>
             <div class="mb-3">
@@ -72,6 +75,7 @@
                     placeholder="Jaipur, Rajasthan" 
                     required
                 >
+                <div class="invalid-feedback">Location should be valid</div>
             </div>
             <button type="submit" class="btn custom-add-btn w-10">Add</button>
             <br>
