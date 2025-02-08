@@ -1,62 +1,72 @@
-//server.js
+const path = require("path");
 const express = require("express");
+const session = require("express-session");
+const flash = require("connect-flash");
+
 const app = express();
-const users = require("./routes/user.js");
-const posts = require("./routes/post.js");
-const cookieParser = require("cookie-parser");
 
-app.use(cookieParser("secretcode"));
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
 
+// Middleware for parsing form data
+app.use(express.urlencoded({ extended: true }));
 
-app.get("/getsignedcookie",(req,res)=>{
-        res.cookie("made-in","India",{signed: true});
-        res.send("signed cookie sent");
+// Session Configuration
+const sessionOptions = {
+    secret: "mysupersecretstring",
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false, maxAge: 1000 * 60 * 60 * 24 } // 1-day session duration
+};
+
+app.use(session(sessionOptions));
+app.use(flash());
+
+// ===> Custom Middleware to Store Flash Messages and User Data in res.locals <===
+app.use((req, res, next) => {
+    res.locals.success = req.flash("success");
+    res.locals.error = req.flash("error");
+    res.locals.name = req.session.name || "Guest";
+    next();
 });
 
+// ===> Middleware for User Registration <===
+const registerUser = (req, res, next) => {
+    let { name } = req.query;
 
-app.get("/verify",(req,res)=>{
-    console.log(req.signedCookies);
-    res.send("verified");
+    if (!name) {
+        req.flash("error", "User not registered!");
+        return res.redirect("/hello");
+    }
+
+    req.session.name = name;
+    req.flash("success", "User registered successfully!");
+    next();
+};
+
+// Route to Handle Registration (Now Uses Middleware)
+app.get("/register", registerUser, (req, res) => {
+    res.redirect("/hello");
 });
 
-app.get("/getcookies",(req,res)=>{
-    res.cookies("greet","namaste");
-    res.cookies("madeIn","India");
-
-    res.send("send you some cookies!");
+// Hello Route (Now Uses res.locals)
+app.get("/hello", (req, res) => {
+    res.render("page.ejs");
 });
 
-app.get("/greet",(req,res)=>{
-    let {name="anonymous"} = req.cookies;
-    res.send(`Hi, ${name}`);
-});
-
-app.get("/",(req,res)=>{
-    console.log(req.cookies);
-    res.send("Hi,I am root!");
-});
-
-
-
-
-
-// Middleware to parse JSON (if needed)
-app.use(express.json());
-
-app.use("/users",users);
-app.use("/",posts)
-
-// Root route
-app.get("/", (req, res) => {
-  res.send("Hi, I am root!");
-});
-
-
-
-
-
-
-// Start the server
+// Start the Server
 app.listen(3000, () => {
-  console.log("Server is listening on port 3000");
+    console.log("Server is listening on port 3000");
 });
+
+
+
+
+
+
+/*
+Now, when a user registers via /register?name=John, they will be redirected to /hello and see:
+
+User registered successfully!
+Hello, John
+*/
