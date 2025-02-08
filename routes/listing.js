@@ -49,22 +49,29 @@ router.get(
   
 // Show Route
 router.get(
-    "/:id",
-    wrapAsync(async (req, res, next) => {
-      const { id } = req.params;
-      if (!mongoose.Types.ObjectId.isValid(id)) {
-        throw new ExpressError(
-          400,
-          `Invalid ID: "${id}" is not a valid MongoDB ObjectId`
-        );
-      }
-      const listing = await Listing.findById(id).populate("reviews");
-      if (!listing) {
-        throw new ExpressError(404, "Listing not found");
-      }
-      res.render("listings/show.ejs", { listing });
-    })
-  );
+  "/:id",
+  wrapAsync(async (req, res, next) => {
+    const { id } = req.params;
+
+    // Validate the ObjectId first:
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      req.flash("error", `Invalid ID: "${id}" is not a valid MongoDB ObjectId`);
+      return res.redirect("/listings");
+    }
+
+    const listing = await Listing.findById(id).populate("reviews");
+
+    // If no listing is found, flash an error and redirect to the main listings page:
+    if (!listing) {
+      req.flash("error", "Listing you requested does not exist!");
+      return res.redirect("/listings");
+    }
+
+    // Otherwise, render the show page:
+    res.render("listings/show.ejs", { listing });
+  })
+);
+
   
   
   // Create Route
@@ -78,27 +85,36 @@ router.get(
       // }
       const newListing = new Listing(req.body.listing);
       await newListing.save();
+      req.flash("success","New Listing Created!");
       res.redirect("/listings");
     })
   );
   
-  // Edit Route
-  router.get(
-    "/:id/edit",
-    wrapAsync(async (req, res) => {
-      const { id } = req.params;
-      try {
-        const listing = await Listing.findById(id);
-        if (!listing) {
-          return res.status(404).send("Listing not found");
-        }
-        res.render("listings/edit.ejs", { listing });
-      } catch (err) {
-        console.error(err);
-        res.status(500).send("Error fetching the listing for editing.");
-      }
-    })
-  );
+// Edit Route
+router.get(
+  "/:id/edit",
+  wrapAsync(async (req, res) => {
+    const { id } = req.params;
+
+    // Validate the ObjectId first
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      req.flash("error", `Invalid ID: "${id}" is not a valid MongoDB ObjectId`);
+      return res.redirect("/listings");
+    }
+
+    const listing = await Listing.findById(id);
+
+    // If listing doesn't exist, flash an error and redirect
+    if (!listing) {
+      req.flash("error", "Listing you requested does not exist!");
+      return res.redirect("/listings");
+    }
+
+    // Otherwise, render the edit page
+    res.render("listings/edit.ejs", { listing });
+  })
+);
+
   
 // Update Route
 router.put(
@@ -107,6 +123,7 @@ router.put(
     wrapAsync(async (req, res) => {
       const { id } = req.params;
       await Listing.findByIdAndUpdate(id, { ...req.body.listing });
+      req.flash("success","Listing Updated !");
       res.redirect(`/listings/${id}`);
     })
   );
@@ -119,6 +136,7 @@ router.put(
       let { id } = req.params;
       let deletedListing = await Listing.findByIdAndDelete(id);
       console.log(deletedListing);
+      req.flash("success","Listing Deleted!");
       res.redirect("/listings");
     })
   );

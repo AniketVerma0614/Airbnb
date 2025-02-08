@@ -10,6 +10,8 @@ const ejsMate = require("ejs-mate");
 const ExpressError = require("./utils/ExpressError.js");
 // const { listingSchema ,reviewSchema} = require("./schema.js");
 // const Review = require("./models/review.js");
+const session = require("express-session");
+const flash = require("connect-flash");
 
 const listings = require("./routes/listing.js");
 const reviews = require("./routes/review.js")
@@ -35,11 +37,32 @@ app.use(methodOverride("_method"));
 app.engine("ejs", ejsMate);
 app.use(express.static(path.join(__dirname, "/public")));
 
+
+const sessionOptions = {
+  secret: "mysupersecretcode",
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    expires: Date.now() + 7 *24*60*60*1000,
+    maxAge: 7 *24*60*60*1000,
+    httpOnly: true,
+  }
+};
+
 // Root route
 app.get("/", (req, res) => {
   res.send("Root is working!");
 });
 
+app.use(session(sessionOptions));
+app.use(flash());
+
+app.use((req, res, next) => {
+  res.locals.success = req.flash("success");
+  // Ensure the key here matches the one used in your routes:
+  res.locals.error = req.flash("error");
+  next();
+});
 
 
 
