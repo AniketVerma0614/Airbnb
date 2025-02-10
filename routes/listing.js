@@ -11,19 +11,37 @@ const listingController = require("../controllers/listings.js");
 const { render } = require("ejs");
 
 
-// Index Route
-router.get("/",wrapAsync(listingController.index));
-  
+router
+  .route("/")
+  .get(wrapAsync(listingController.index))
+  .post(isLoggedIn,validateListing,wrapAsync(listingController.createListing)
+);
+
 // New Route
- router.get("/new",isLoggedIn, listingController.renderNewForm);
+router.get("/new",isLoggedIn, listingController.renderNewForm);
+
+
+
+router
+  .route("/:id")
+  .get(wrapAsync(listingController.showListing))
+  .put(isLoggedIn,isOwner,validateListing,wrapAsync(listingController.updateListing))
+  .delete(isLoggedIn,isOwner,wrapAsync(listingController.destroyListing));
+
+
+
+// Index Route
+
+  
+
   
 // Show Route
-router.get("/:id",wrapAsync(listingController.showListing));
+
 
   
   
 // Create Route
-router.post("/",isLoggedIn,validateListing,wrapAsync(listingController.createListing));
+
   
 
 // Edit Route
@@ -31,11 +49,11 @@ router.get("/:id/edit",isLoggedIn,isOwner,wrapAsync(listingController.renderEdit
 
   
 // Update Route
-router.put("/:id",isLoggedIn,isOwner,validateListing,wrapAsync(listingController.updateListing));
+
   
   
 // Delete Route
-  router.delete("/:id",isLoggedIn,isOwner,wrapAsync(listingController.destroyListing));
+
 
 
 module.exports = router;
