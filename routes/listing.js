@@ -2,28 +2,11 @@
 const express = require("express");
 const router = express.Router();
 const wrapAsync = require("../utils/wrapAsync.js");
-const ExpressError = require("../utils/ExpressError.js");
-const {listingSchema} = require("../schema.js");
+
 const Listing = require("../models/listing.js");
 const mongoose = require("mongoose");
+const {isLoggedIn,isOwner, validateListing } = require("../middleware.js");
 
-
-
-
-// Minimal change: Move the req.body.listing check into the validation middleware.
-const validateListing = (req, res, next) => {
-    if (!req.body.listing) {
-      throw new ExpressError(400, "Send valid data for listings");
-    }
-    let { error } = listingSchema.validate(req.body);
-    if (error) {
-      const msg = error.details.map((el) => el.message).join(", ");
-      throw new ExpressError(400, msg);
-    }
-    else{
-      next();
-    }
-  };
 
 
 
@@ -42,10 +25,10 @@ router.get(
     })
   );
   
-  // New Route
-  router.get("/new", (req, res) => {
+// New Route
+ router.get("/new",isLoggedIn, (req, res) => {
     res.render("listings/new.ejs");
-  });
+ });
   
 // Show Route
 router.get(
@@ -59,14 +42,21 @@ router.get(
       return res.redirect("/listings");
     }
 
-    const listing = await Listing.findById(id).populate("reviews");
+    const listing = await Listing.findById(id)
+          .populate({
+            path: "reviews",
+            populate : {
+              path: "author",
+            },
+          })
+        .populate("owner");
 
     // If no listing is found, flash an error and redirect to the main listings page:
     if (!listing) {
       req.flash("error", "Listing you requested does not exist!");
       return res.redirect("/listings");
     }
-
+    console.log(listing);
     // Otherwise, render the show page:
     res.render("listings/show.ejs", { listing });
   })
@@ -77,6 +67,7 @@ router.get(
   // Create Route
   router.post(
     "/",
+    isLoggedIn,
     validateListing,
     wrapAsync(async (req, res, next) => {
       // With the check moved into validateListing, this is no longer needed:
@@ -84,6 +75,7 @@ router.get(
       //   throw new ExpressError(400, "Send valid data for listings");
       // }
       const newListing = new Listing(req.body.listing);
+      newListing.owner = req.user._id;
       await newListing.save();
       req.flash("success","New Listing Created!");
       res.redirect("/listings");
@@ -93,6 +85,8 @@ router.get(
 // Edit Route
 router.get(
   "/:id/edit",
+  isLoggedIn,
+  isOwner,
   wrapAsync(async (req, res) => {
     const { id } = req.params;
 
@@ -119,10 +113,13 @@ router.get(
 // Update Route
 router.put(
     "/:id",
+    isLoggedIn,
+    isOwner,
     validateListing,
     wrapAsync(async (req, res) => {
-      const { id } = req.params;
+      let {id} = req.params;   
       await Listing.findByIdAndUpdate(id, { ...req.body.listing });
+      console.log(req.user);
       req.flash("success","Listing Updated !");
       res.redirect(`/listings/${id}`);
     })
@@ -132,6 +129,8 @@ router.put(
   // Delete Route
   router.delete(
     "/:id",
+    isLoggedIn,
+    isOwner,
     wrapAsync(async (req, res) => {
       let { id } = req.params;
       let deletedListing = await Listing.findByIdAndDelete(id);

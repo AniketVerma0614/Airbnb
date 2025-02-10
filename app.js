@@ -74,6 +74,7 @@ app.use((req, res, next) => {
   res.locals.success = req.flash("success");
   // Ensure the key here matches the one used in your routes:
   res.locals.error = req.flash("error");
+  res.locals.currUser = req.user;
   next();
 });
 
