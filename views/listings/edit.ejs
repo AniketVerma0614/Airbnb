@@ -5,7 +5,13 @@
         <body>
             <div class="container mt-5">
                 <h3 class="text-center mb-4">Edit Your Listing</h3>
-                <form method="POST" action="/listings/<%= listing.id %>?_method=PUT" class="p-4 bg-light border rounded needs-validation" novalidate>
+                <form 
+                    method="POST" 
+                    action="/listings/<%= listing.id %>?_method=PUT" 
+                    class="p-4 bg-light border rounded needs-validation" 
+                    novalidate
+                    enctype="multipart/form-data"
+                    >
                     <div class="mb-3">
                         <label for="title" class="form-label">Title</label>
                         <input 
@@ -30,14 +36,12 @@
                         <div class="valid-feedback">Description should be short</div>
                     </div>
                     <div class="mb-3">
-                        <label for="image" class="form-label">Image Link</label>
+                        <label for="image" class="form-label">Upload New Image</label>
                         <input 
-                            type="text" 
+                            type="file" 
                             class="form-control" 
                             id="image" 
-                            name="listing[image]" 
-                            value="<%= listing.image %>" 
-                            required
+                            name="listing[image]"  
                         >
                         <div class="valid-feedback">Image link shoud be valid</div>
                     </div>
