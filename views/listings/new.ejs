@@ -5,7 +5,13 @@
 <body>
     <div class="container mt-5">
         <h3 class="text-center mb-4">Create a New Listing</h3>
-        <form method="POST" action="/listings" class="p-4 bg-light border rounded needs-validation" novalidate>
+        <form 
+            method="POST" 
+            action="/listings" 
+            class="p-4 bg-light border rounded needs-validation" 
+            novalidate 
+            enctype="multipart/form-data">
+            
             <div class="mb-3">
                 <label for="title" class="form-label">Title</label>
                 <input 
@@ -30,16 +36,18 @@
                 ></textarea>
                 <div class="invalid-feedback">Please enter a short description</div>
             </div>
+            
+            
             <div class="mb-3">
-                <label for="image" class="form-label">Image Link</label>
+                <label for="image" class="form-label">Upload Listing Image</label>
                 <input 
-                    type="text" 
+                    type="file" 
                     class="form-control" 
                     id="image" 
-                    name="listing[image]" 
-                    placeholder="Enter image URL/Link" 
+                    name="listing[image]"  
                 >
             </div>
+
         <div class="row">
             <div class="mb-3 col-md-4">
                 <label for="price" class="form-label">Price</label>

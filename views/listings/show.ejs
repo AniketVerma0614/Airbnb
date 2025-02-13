@@ -4,7 +4,7 @@
         <body>
             <h3 class="mb-4"><%= listing.title %></h3>
             <div class="card border-0 listing-card">
-                <img src="<%= listing.image %>" class="img-fluid show-img" alt="listing_image">
+                <img src="<%= listing.image.url %>" class="img-fluid show-img" alt="listing_image">
                 <div class="card-body">
                     <p class="card-text">
                         <span>Owned by <i><%= listing.owner.username %></i></span><br></p>

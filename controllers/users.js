@@ -1,5 +1,5 @@
 const { model } = require("mongoose");
-const { route } = require("../routes/user");
+// const { route } = require("../routes/user");
 const User = require("../models/user");
 
 module.exports.renderSignupForm  =  (req,res)=>{
