@@ -1,8 +1,11 @@
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
-console.log("MAP_TOKEN:", process.env.MAP_TOKEN || "NOT SET");
+
+console.log("ATLASDB_URL:", process.env.ATLASDB_URL || "NOT SET");
 console.log("SECRET:", process.env.SECRET || "NOT SET");
+console.log("MAP_TOKEN:", process.env.MAP_TOKEN || "NOT SET");
+
 
 
 //app.js
