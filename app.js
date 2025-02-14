@@ -64,10 +64,10 @@ const sessionOptions = {
   }
 };
 
-// Root route
-app.get("/", (req, res) => {
-  res.send("Root is working!");
-});
+// // Root route
+// app.get("/", (req, res) => {
+//   res.send("Root is working!");
+// });
 
 app.use(session(sessionOptions));
 app.use(flash());
