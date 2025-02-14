@@ -1,8 +1,9 @@
 if (process.env.NODE_ENV !== "production") {
-  const dotenv = require("dotenv");
-  dotenv.config(); // Load environment variables from .env
-  console.log(process.env.SECRET);
+  require("dotenv").config();
 }
+console.log("MAP_TOKEN:", process.env.MAP_TOKEN || "NOT SET");
+console.log("SECRET:", process.env.SECRET || "NOT SET");
+
 
 //app.js
 const express = require("express");
