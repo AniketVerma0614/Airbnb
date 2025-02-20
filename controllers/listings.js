@@ -14,9 +14,11 @@ const geocodingClient = mbxGeocoding({accessToken: mapToken});
 //         res.status(500).send("Error fetching listings.");
 //       }
 // };
+// controllers/listings.js
 module.exports.index = async (req, res) => {
   try {
     const { search } = req.query;
+    console.log("Search query:", search); // Debug log
     let query = {};
     if (search) {
       query = {
@@ -30,10 +32,11 @@ module.exports.index = async (req, res) => {
     const allListings = await Listing.find(query);
     res.render("listings/index.ejs", { allListings, search });
   } catch (err) {
-    console.error(err);
+    console.error("Error in listings index:", err);
     res.status(500).send("Error fetching listings.");
   }
 };
+
 
 
 
