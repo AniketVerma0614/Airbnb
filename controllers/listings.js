@@ -5,15 +5,36 @@ const mapToken = process.env.MAP_TOKEN;
 const geocodingClient = mbxGeocoding({accessToken: mapToken});
 
 
+// module.exports.index = async (req, res) => {
+//       try {
+//         const allListings = await Listing.find({});
+//         res.render("listings/index.ejs", { allListings });
+//       } catch (err) {
+//         console.error(err);
+//         res.status(500).send("Error fetching listings.");
+//       }
+// };
 module.exports.index = async (req, res) => {
-      try {
-        const allListings = await Listing.find({});
-        res.render("listings/index.ejs", { allListings });
-      } catch (err) {
-        console.error(err);
-        res.status(500).send("Error fetching listings.");
-      }
+  try {
+    const { search } = req.query;
+    let query = {};
+    if (search) {
+      query = {
+        $or: [
+          { title: { $regex: search, $options: "i" } },
+          { location: { $regex: search, $options: "i" } },
+          { country: { $regex: search, $options: "i" } }
+        ]
+      };
+    }
+    const allListings = await Listing.find(query);
+    res.render("listings/index.ejs", { allListings, search });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error fetching listings.");
+  }
 };
+
 
 
 module.exports.renderNewForm = (req,res) =>{
