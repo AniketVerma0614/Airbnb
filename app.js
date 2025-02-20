@@ -107,6 +107,14 @@ app.use((req, res, next) => {
   next();
 });
 
+// Root route to redirect first-time accesses:
+app.get("/", (req, res) => {
+  if (!req.user) {
+    return res.redirect("/signup");
+  }
+  res.redirect("/listings");
+});
+
 // app.get("/demouser",async (req,res)=>{
 //     let fakeUser = new User({
 //       email: "student@gmail.com",
