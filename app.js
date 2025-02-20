@@ -100,14 +100,15 @@ passport.use(new localStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+// Add this middleware after passport configuration:
 app.use((req, res, next) => {
   res.locals.success = req.flash("success");
-  // Ensure the key here matches the one used in your routes:
   res.locals.error = req.flash("error");
   res.locals.currUser = req.user;
+  // Make sure 'search' is always defined, defaulting to an empty string
+  res.locals.search = req.query.search || '';
   next();
 });
-
 // Root route to redirect first-time accesses:
 app.get("/", (req, res) => {
   if (!req.user) {
