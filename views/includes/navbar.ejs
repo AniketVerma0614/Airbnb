@@ -42,7 +42,8 @@
               name="search"
               placeholder="Search Destinations" 
               aria-label="Search"
-              value="<%= search || '' %>">
+              value="<%= typeof search !== 'undefined' ? search : '' %>"
+            >
             <button class="btn search-btn" type="submit">
               <i class="fa-solid fa-magnifying-glass"></i> Search
             </button>
